@@ -5,6 +5,7 @@ import { Login } from './pages/Login.jsx';
 import { Register } from './pages/Register.jsx';
 import { ResetPassword } from './pages/ResetPassword.jsx';
 import { Dashboard } from './pages/Dashboard.jsx';
+import { Playground } from './pages/Playground.jsx';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuthStore();
@@ -56,6 +57,11 @@ function App() {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/playground" element={
+        <ProtectedRoute>
+          <Playground />
         </ProtectedRoute>
       } />
     </Routes>
