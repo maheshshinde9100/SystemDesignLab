@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { Mail, Lock, LogIn, Github } from 'lucide-react';
+import { Mail, Lock, LogIn, GitBranch } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -124,7 +124,7 @@ export const Login = () => {
             onClick={handleGitHubSignIn}
             className="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-colors"
           >
-            <GithubIcon className="w-5 h-5" />
+            <GitBranch className="w-5 h-5" />
             GitHub
           </button>
         </div>
