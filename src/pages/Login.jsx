@@ -124,7 +124,7 @@ export const Login = () => {
             onClick={handleGitHubSignIn}
             className="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-colors"
           >
-            <Github className="w-5 h-5" />
+            <GitHubIcon className="w-5 h-5" />
             GitHub
           </button>
         </div>
