@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
+import { ProjectList } from '../components/ProjectList';
 import { LogOut, User, PlaySquare, BookOpen, Plus } from 'lucide-react';
 
 export const Dashboard = () => {
@@ -78,7 +79,7 @@ export const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <h3 className="text-xl font-semibold text-white mb-4">Recent Projects</h3>
-            <p className="text-gray-400">No projects yet. Create your first one!</p>
+            <ProjectList />
           </div>
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <h3 className="text-xl font-semibold text-white mb-4">Favorites</h3>

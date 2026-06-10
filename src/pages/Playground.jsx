@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import ReactFlow, { 
   Background, 
   Controls, 
@@ -13,7 +13,7 @@ import { useCanvasStore } from '../store/useCanvasStore';
 import { SystemNode } from '../components/SystemNode';
 import { ComponentLibrary } from '../components/ComponentLibrary';
 import { PropertiesPanel } from '../components/PropertiesPanel';
-import { LogOut, ArrowLeft, Trash2, Play, Save } from 'lucide-react';
+import { LogOut, ArrowLeft, Trash2, Play, Save, X } from 'lucide-react';
 
 const nodeTypes = {
   system: SystemNode,
@@ -25,16 +25,23 @@ const getNodeId = () => `node_${nodeId++}`;
 export const Playground = () => {
   const reactFlowWrapper = useRef(null);
   const navigate = useNavigate();
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [projectName, setProjectName] = useState('');
+  const [saveError, setSaveError] = useState('');
+  const [saving, setSaving] = useState(false);
+  
   const { user, signOut } = useAuthStore();
   const { 
     nodes, 
     edges, 
+    currentProject,
     onNodesChange, 
     onEdgesChange, 
     onConnect, 
     addNode, 
     setSelectedNode,
-    clearCanvas 
+    clearCanvas,
+    saveProject
   } = useCanvasStore();
   const [, setNodes, onNodesChangeInternal] = useNodesState(nodes);
   const [, setEdges, onEdgesChangeInternal] = useEdgesState(edges);
@@ -102,6 +109,31 @@ export const Playground = () => {
     setSelectedNode(null);
   }, [setSelectedNode]);
 
+  const handleOpenSaveModal = () => {
+    setProjectName(currentProject?.name || '');
+    setSaveError('');
+    setIsSaveModalOpen(true);
+  };
+
+  const handleSaveProject = async (e) => {
+    e.preventDefault();
+    if (!projectName.trim()) {
+      setSaveError('Please enter a project name');
+      return;
+    }
+
+    setSaving(true);
+    setSaveError('');
+    try {
+      await saveProject(projectName.trim());
+      setIsSaveModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-gray-900">
       <nav className="bg-gray-800 border-b border-gray-700 px-6 py-3 flex justify-between items-center shrink-0">
@@ -113,7 +145,12 @@ export const Playground = () => {
             <ArrowLeft className="w-5 h-5" />
             Back
           </button>
-          <h1 className="text-xl font-bold text-white">System Design Playground</h1>
+          <div>
+            <h1 className="text-xl font-bold text-white">System Design Playground</h1>
+            {currentProject && (
+              <p className="text-sm text-gray-400">{currentProject.name}</p>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -127,7 +164,10 @@ export const Playground = () => {
             <Play className="w-4 h-4" />
             Simulate
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
+          <button
+            onClick={handleOpenSaveModal}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
+          >
             <Save className="w-4 h-4" />
             Save
           </button>
@@ -185,6 +225,56 @@ export const Playground = () => {
 
         <PropertiesPanel />
       </div>
+
+      {isSaveModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">Save Project</h2>
+              <button
+                onClick={() => setIsSaveModalOpen(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleSaveProject} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Project Name</label>
+                <input
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
+                  placeholder="My Awesome System"
+                  autoFocus
+                />
+              </div>
+              {saveError && (
+                <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm">
+                  {saveError}
+                </div>
+              )}
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsSaveModalOpen(false)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white rounded-lg transition-colors"
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
