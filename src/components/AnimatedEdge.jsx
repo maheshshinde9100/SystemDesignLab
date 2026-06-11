@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { getBezierPath, EdgeProps } from 'reactflow';
+import { getBezierPath } from 'reactflow';
 import { useCanvasStore } from '../store/useCanvasStore';
 
 export const AnimatedEdge = ({
@@ -13,14 +13,14 @@ export const AnimatedEdge = ({
   style = {},
   markerEnd,
   data,
-}: EdgeProps) => {
+}) => {
   const [path, setPath] = useState('');
-  const [particles, setParticles] = useState<{ id: string; progress: number }[]>([]);
-  const { isSimulating, nodes } = useCanvasStore();
+  const [particles, setParticles] = useState([]);
+  const { isSimulating, simulationSpeed } = useCanvasStore();
   
-  const svgRef = useRef<SVGGElement>(null);
-  const animationRef = useRef<number | null>(null);
-  const lastTimeRef = useRef<number>(0);
+  const svgRef = useRef(null);
+  const animationRef = useRef(null);
+  const lastTimeRef = useRef(0);
 
   useEffect(() => {
     const [bezierPath] = getBezierPath({
@@ -41,14 +41,14 @@ export const AnimatedEdge = ({
       return;
     }
 
-    const animate = (time: number) => {
+    const animate = (time) => {
       if (!lastTimeRef.current) lastTimeRef.current = time;
       const delta = (time - lastTimeRef.current) / 1000;
       lastTimeRef.current = time;
 
       // Check if we should generate a new particle from a client
-      const sourceNode = nodes.find(n => n.id === data?.sourceNodeId);
-      if (sourceNode?.data.type === 'client' && Math.random() > 0.99) {
+      const sourceNode = useCanvasStore.getState().nodes.find(n => n.id === data?.sourceNodeId);
+      if (sourceNode?.data.type === 'client' && Math.random() > 0.98) {
         setParticles(prev => [
           ...prev,
           { id: `p-${Date.now()}-${Math.random()}`, progress: 0 }
@@ -57,8 +57,9 @@ export const AnimatedEdge = ({
 
       // Update existing particles
       setParticles(prev => 
-        prev.map(p => ({ ...p, progress: p.progress + delta * 0.5 }))
-            .filter(p => p.progress <= 1)
+        prev
+          .map(p => ({ ...p, progress: p.progress + delta * 0.3 * simulationSpeed }))
+          .filter(p => p.progress <= 1)
       );
 
       animationRef.current = requestAnimationFrame(animate);
@@ -69,9 +70,9 @@ export const AnimatedEdge = ({
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [isSimulating, nodes, data]);
+  }, [isSimulating, data, simulationSpeed]);
 
-  const getPointOnPath = (progress: number) => {
+  const getPointOnPath = (progress) => {
     if (!svgRef.current) return { x: sourceX, y: sourceY };
     const pathEl = svgRef.current.querySelector('path');
     if (!pathEl) return { x: sourceX, y: sourceY };
@@ -101,7 +102,7 @@ export const AnimatedEdge = ({
             cy={point.y}
             r={5}
             fill="#3b82f6"
-            className="drop-shadow-lg"
+            className="drop-shadow"
           />
         );
       })}
