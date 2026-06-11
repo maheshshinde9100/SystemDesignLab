@@ -25,7 +25,7 @@ export const Dashboard = () => {
       title: 'Learning Center',
       description: 'Learn about system design concepts',
       icon: BookOpen,
-      link: '#',
+      link: '/learning-center',
       color: 'bg-green-600 hover:bg-green-700',
     },
   ];
