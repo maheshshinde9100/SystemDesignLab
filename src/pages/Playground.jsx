@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import ReactFlow, { 
   Background, 
   Controls, 
@@ -13,14 +13,15 @@ import { useCanvasStore } from '../store/useCanvasStore';
 import { SystemNode } from '../components/SystemNode';
 import { ComponentLibrary } from '../components/ComponentLibrary';
 import { PropertiesPanel } from '../components/PropertiesPanel';
-import { LogOut, ArrowLeft, Trash2, Play, Save, X } from 'lucide-react';
+import { ContextMenu } from '../components/ContextMenu';
+import { LogOut, ArrowLeft, Trash2, Play, Square, Save, X } from 'lucide-react';
 
 const nodeTypes = {
   system: SystemNode,
 };
 
-let nodeId = 0;
-const getNodeId = () => `node_${nodeId++}`;
+let nodeIdCounter = 0;
+const getNodeId = () => `node_${nodeIdCounter++}`;
 
 export const Playground = () => {
   const reactFlowWrapper = useRef(null);
@@ -35,13 +36,21 @@ export const Playground = () => {
     nodes, 
     edges, 
     currentProject,
+    isSimulating,
     onNodesChange, 
     onEdgesChange, 
     onConnect, 
     addNode, 
     setSelectedNode,
     clearCanvas,
-    saveProject
+    saveProject,
+    copyNode,
+    pasteNode,
+    duplicateNode,
+    deleteNode,
+    setContextMenu,
+    startSimulation,
+    stopSimulation,
   } = useCanvasStore();
   const [, setNodes, onNodesChangeInternal] = useNodesState(nodes);
   const [, setEdges, onEdgesChangeInternal] = useEdgesState(edges);
@@ -107,7 +116,40 @@ export const Playground = () => {
 
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
-  }, [setSelectedNode]);
+    setContextMenu(null);
+  }, [setSelectedNode, setContextMenu]);
+
+  const onContextMenu = useCallback(
+    (event) => {
+      event.preventDefault();
+      setContextMenu({ x: event.clientX, y: event.clientY });
+    },
+    [setContextMenu]
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const selectedNode = useCanvasStore.getState().selectedNode;
+
+      if (event.ctrlKey || event.metaKey) {
+        if (event.key === 'c' && selectedNode) {
+          copyNode(selectedNode);
+        }
+        if (event.key === 'v') {
+          pasteNode({ x: 100, y: 100 });
+        }
+        if (event.key === 'd' && selectedNode) {
+          duplicateNode(selectedNode);
+        }
+      }
+      if (event.key === 'Delete' && selectedNode) {
+        deleteNode(selectedNode.id);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [copyNode, pasteNode, duplicateNode, deleteNode]);
 
   const handleOpenSaveModal = () => {
     setProjectName(currentProject?.name || '');
@@ -131,6 +173,14 @@ export const Playground = () => {
       setSaveError(err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const toggleSimulation = () => {
+    if (isSimulating) {
+      stopSimulation();
+    } else {
+      startSimulation();
     }
   };
 
@@ -160,9 +210,12 @@ export const Playground = () => {
             <Trash2 className="w-4 h-4" />
             Clear
           </button>
-          <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">
-            <Play className="w-4 h-4" />
-            Simulate
+          <button
+            onClick={toggleSimulation}
+            className={`flex items-center gap-2 ${isSimulating ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white px-4 py-2 rounded transition-colors`}
+          >
+            {isSimulating ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+            {isSimulating ? 'Stop' : 'Simulate'}
           </button>
           <button
             onClick={handleOpenSaveModal}
@@ -198,7 +251,9 @@ export const Playground = () => {
             onDragOver={onDragOver}
             onNodeClick={onNodeClick}
             onPaneClick={onPaneClick}
+            onContextMenu={onContextMenu}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             fitView
             className="bg-gray-900"
           >
@@ -216,6 +271,8 @@ export const Playground = () => {
                   database: '#fb923c',
                   readReplica: '#fbbf24',
                   queue: '#22d3ee',
+                  microservice: '#fb7185',
+                  cdn: '#818cf8',
                 };
                 return colors[node.data.type] || '#60a5fa';
               }}
@@ -225,6 +282,8 @@ export const Playground = () => {
 
         <PropertiesPanel />
       </div>
+
+      <ContextMenu />
 
       {isSaveModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

@@ -5,7 +5,9 @@ import {
   HardDrive, 
   RadioTower, 
   MessageSquare, 
-  Layers 
+  Layers,
+  Cpu,
+  Cloud,
 } from 'lucide-react';
 
 const components = [
@@ -17,6 +19,8 @@ const components = [
   { type: 'database', icon: Database, label: 'Database', color: 'text-orange-400' },
   { type: 'readReplica', icon: HardDrive, label: 'Read Replica', color: 'text-amber-400' },
   { type: 'queue', icon: MessageSquare, label: 'Message Queue', color: 'text-cyan-400' },
+  { type: 'microservice', icon: Cpu, label: 'Microservice', color: 'text-rose-400' },
+  { type: 'cdn', icon: Cloud, label: 'CDN', color: 'text-indigo-400' },
 ];
 
 export const ComponentLibrary = ({ onAddNode }) => {
