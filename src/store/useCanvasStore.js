@@ -35,7 +35,11 @@ export const useCanvasStore = create((set, get) => ({
   },
   
   onConnect: (params) => {
-    set({ edges: addEdge({ ...params, animated: true }, get().edges) });
+    set({ edges: addEdge({ 
+      ...params, 
+      animated: true,
+      data: { sourceNodeId: params.source }
+    }, get().edges) });
   },
   
   addNode: (node) => {

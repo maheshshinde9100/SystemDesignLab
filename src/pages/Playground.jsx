@@ -253,6 +253,7 @@ export const Playground = () => {
             onPaneClick={onPaneClick}
             onContextMenu={onContextMenu}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             fitView
             className="bg-gray-900"
           >
