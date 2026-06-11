@@ -1,5 +1,26 @@
 export const templates = [
   {
+    id: 'uber-clone',
+    name: 'Uber Clone',
+    description: 'Ridesharing platform with API gateway, microservices, and message queue',
+    nodes: [
+      { id: '1', type: 'system', position: { x: 250, y: 50 }, data: { type: 'client', label: 'Mobile App' } },
+      { id: '2', type: 'system', position: { x: 250, y: 170 }, data: { type: 'apiGateway', label: 'API Gateway' } },
+      { id: '3', type: 'system', position: { x: 100, y: 290 }, data: { type: 'microservice', label: 'Ride Matching' } },
+      { id: '4', type: 'system', position: { x: 250, y: 290 }, data: { type: 'microservice', label: 'Payment Service' } },
+      { id: '5', type: 'system', position: { x: 400, y: 290 }, data: { type: 'queue', label: 'Message Queue' } },
+      { id: '6', type: 'system', position: { x: 250, y: 410 }, data: { type: 'database', label: 'Database' } },
+    ],
+    edges: [
+      { id: 'e1-2', source: '1', target: '2', animated: true, data: { sourceNodeId: '1' } },
+      { id: 'e2-3', source: '2', target: '3', animated: true, data: { sourceNodeId: '2' } },
+      { id: 'e2-4', source: '2', target: '4', animated: true, data: { sourceNodeId: '2' } },
+      { id: 'e3-5', source: '3', target: '5', animated: true, data: { sourceNodeId: '3' } },
+      { id: 'e3-6', source: '3', target: '6', animated: true, data: { sourceNodeId: '3' } },
+      { id: 'e4-6', source: '4', target: '6', animated: true, data: { sourceNodeId: '4' } },
+    ],
+  },
+  {
     id: 'url-shortener',
     name: 'URL Shortener',
     description: 'Simple URL shortening service with cache and database',

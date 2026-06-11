@@ -1,5 +1,103 @@
 export const learningTopics = [
   {
+    id: "distributed-systems-basics",
+    title: "Distributed Systems Basics",
+    description: "Introduction to core distributed systems concepts.",
+    explanation: "Distributed systems are collections of independent computers that appear to users as a single coherent system. They help achieve scalability, fault tolerance, and availability but introduce complexity in coordination.",
+    advantages: [
+      "Scalability: add more resources to handle load",
+      "Fault tolerance: system works even if parts fail",
+      "Geographic distribution: serve users from nearby locations"
+    ],
+    disadvantages: [
+      "Complexity in coordination and communication",
+      "Increased latency due to network calls",
+      "Difficulty in debugging distributed issues"
+    ],
+    useCases: [
+      "Web applications with millions of users",
+      "Global services with data centers worldwide"
+    ],
+    interviewQuestions: [
+      "What is a distributed system?",
+      "What are the key challenges in distributed systems?"
+    ],
+    realWorldExamples: ["Google Cloud Platform", "AWS"]
+  },
+  {
+    id: "kafka",
+    title: "Kafka",
+    description: "Distributed event streaming platform for real-time data pipelines.",
+    explanation: "Apache Kafka is an open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.",
+    advantages: [
+      "High throughput and low latency",
+      "Scalability and fault tolerance",
+      "Permanent storage of events"
+    ],
+    disadvantages: [
+      "Complexity in setup and management",
+      "Requires understanding of distributed systems"
+    ],
+    useCases: [
+      "Real-time data pipelines",
+      "Event sourcing architectures"
+    ],
+    interviewQuestions: [
+      "What is Kafka?",
+      "What is the difference between Kafka and a message queue?"
+    ],
+    realWorldExamples: ["Confluent Kafka", "Amazon MSK"]
+  },
+  {
+    id: "redis",
+    title: "Redis",
+    description: "In-memory data structure store used as a database, cache, and message broker.",
+    explanation: "Redis is an open source, in-memory data structure store used as a database, cache, message broker, and streaming engine. It provides data structures such as strings, hashes, lists, sets, etc.",
+    advantages: [
+      "Extremely fast (in-memory operations)",
+      "Wide range of data structures",
+      "Supports persistence"
+    ],
+    disadvantages: [
+      "Memory constraints",
+      "Data loss risk if not configured properly"
+    ],
+    useCases: [
+      "Caching frequently accessed data",
+      "Session management",
+      "Leaderboards and real-time analytics"
+    ],
+    interviewQuestions: [
+      "What is Redis?",
+      "What's the difference between Redis and Memcached?"
+    ],
+    realWorldExamples: ["Redis Cloud", "Amazon ElastiCache for Redis"]
+  },
+  {
+    id: "event-driven-architecture",
+    title: "Event Driven Architecture",
+    description: "Build systems based on events and event handlers.",
+    explanation: "Event-driven architecture is a software architecture pattern promoting the production, detection, consumption of, and reaction to events. An event is any significant change in state.",
+    advantages: [
+      "Decoupling of services",
+      "Scalability and flexibility",
+      "Real-time processing"
+    ],
+    disadvantages: [
+      "Debugging can be more difficult",
+      "Event ordering and idempotency challenges"
+    ],
+    useCases: [
+      "Real-time analytics",
+      "Microservices communication"
+    ],
+    interviewQuestions: [
+      "What is event-driven architecture?",
+      "What are the key components of event-driven systems?"
+    ],
+    realWorldExamples: ["Kafka", "Amazon EventBridge", "Serverless Functions"]
+  },
+  {
     id: "load-balancers",
     title: "Load Balancers",
     description: "Distribute traffic across servers to improve reliability and performance.",
