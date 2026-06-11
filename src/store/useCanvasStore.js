@@ -3,6 +3,9 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { supabase } from '../lib/supabase';
 
+let nodeIdCounter = 0;
+const getNodeId = () => `node_${nodeIdCounter++}`;
+
 export const useCanvasStore = create((set, get) => ({
   nodes: [],
   edges: [],
@@ -10,10 +13,18 @@ export const useCanvasStore = create((set, get) => ({
   currentProject: null,
   projects: [],
   loadingProjects: false,
+  isSimulating: false,
+  simulationSpeed: 1,
+  contextMenu: null,
+  clipboard: null,
+  
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
-  setSelectedNode: (node) => set({ selectedNode }),
+  setSelectedNode: (node) => set({ selectedNode: node }),
   setCurrentProject: (project) => set({ currentProject: project }),
+  setIsSimulating: (val) => set({ isSimulating: val }),
+  setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
+  setContextMenu: (menu) => set({ contextMenu: menu }),
   
   onNodesChange: (changes) => {
     set({ nodes: applyNodeChanges(changes, get().nodes) });
@@ -122,4 +133,40 @@ export const useCanvasStore = create((set, get) => ({
       currentProject: state.currentProject?.id === projectId ? null : state.currentProject,
     }));
   },
+
+  copyNode: (node) => {
+    set({ clipboard: { ...node } });
+  },
+
+  pasteNode: (position) => {
+    const { clipboard, addNode } = get();
+    if (clipboard) {
+      const newNode = {
+        ...clipboard,
+        id: getNodeId(),
+        position: { x: position.x + 20, y: position.y + 20 },
+      };
+      addNode(newNode);
+    }
+  },
+
+  duplicateNode: (node) => {
+    const newNode = {
+      ...node,
+      id: getNodeId(),
+      position: { x: node.position.x + 30, y: node.position.y + 30 },
+    };
+    set({ nodes: [...get().nodes, newNode], selectedNode: newNode });
+  },
+
+  deleteNode: (nodeId) => {
+    set((state) => ({
+      nodes: state.nodes.filter(n => n.id !== nodeId),
+      edges: state.edges.filter(e => e.source !== nodeId && e.target !== nodeId),
+      selectedNode: state.selectedNode?.id === nodeId ? null : state.selectedNode,
+    }));
+  },
+
+  startSimulation: () => set({ isSimulating: true }),
+  stopSimulation: () => set({ isSimulating: false }),
 }));

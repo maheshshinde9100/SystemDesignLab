@@ -6,7 +6,9 @@ import {
   HardDrive, 
   RadioTower, 
   MessageSquare, 
-  Layers 
+  Layers,
+  Cpu,
+  Cloud,
 } from 'lucide-react';
 
 const componentConfigs = {
@@ -18,6 +20,8 @@ const componentConfigs = {
   database: { icon: Database, color: 'text-orange-400', bg: 'bg-orange-900/30', label: 'Database' },
   readReplica: { icon: HardDrive, color: 'text-amber-400', bg: 'bg-amber-900/30', label: 'Read Replica' },
   queue: { icon: MessageSquare, color: 'text-cyan-400', bg: 'bg-cyan-900/30', label: 'Queue' },
+  microservice: { icon: Cpu, color: 'text-rose-400', bg: 'bg-rose-900/30', label: 'Microservice' },
+  cdn: { icon: Cloud, color: 'text-indigo-400', bg: 'bg-indigo-900/30', label: 'CDN' },
 };
 
 export const SystemNode = ({ data, selected }) => {
