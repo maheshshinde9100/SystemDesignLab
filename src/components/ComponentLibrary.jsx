@@ -4,7 +4,6 @@ import {
   Database, 
   HardDrive, 
   RadioTower, 
-  Cache, 
   MessageSquare, 
   Layers 
 } from 'lucide-react';
@@ -14,7 +13,7 @@ const components = [
   { type: 'loadBalancer', icon: RadioTower, label: 'Load Balancer', color: 'text-purple-400' },
   { type: 'apiGateway', icon: Layers, label: 'API Gateway', color: 'text-pink-400' },
   { type: 'server', icon: Server, label: 'Backend Server', color: 'text-green-400' },
-  { type: 'cache', icon: Cache, label: 'Cache', color: 'text-yellow-400' },
+  { type: 'cache', icon: Layers, label: 'Cache', color: 'text-yellow-400' },
   { type: 'database', icon: Database, label: 'Database', color: 'text-orange-400' },
   { type: 'readReplica', icon: HardDrive, label: 'Read Replica', color: 'text-amber-400' },
   { type: 'queue', icon: MessageSquare, label: 'Message Queue', color: 'text-cyan-400' },

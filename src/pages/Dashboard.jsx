@@ -18,7 +18,7 @@ export const Dashboard = () => {
       title: 'Templates',
       description: 'Browse pre-built system design templates',
       icon: PlaySquare,
-      link: '#',
+      link: '/templates',
       color: 'bg-purple-600 hover:bg-purple-700',
     },
     {
