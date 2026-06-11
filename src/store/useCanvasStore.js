@@ -14,17 +14,28 @@ export const useCanvasStore = create((set, get) => ({
   projects: [],
   loadingProjects: false,
   isSimulating: false,
+  isPaused: false,
   simulationSpeed: 1,
   contextMenu: null,
   clipboard: null,
-  
+  metrics: {
+    requestsPerSecond: 0,
+    averageLatency: 0,
+    throughput: 0,
+    errorRate: 0,
+    queueSize: 0,
+    cacheHitRatio: 0
+  },
+
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
   setSelectedNode: (node) => set({ selectedNode: node }),
   setCurrentProject: (project) => set({ currentProject: project }),
   setIsSimulating: (val) => set({ isSimulating: val }),
+  setIsPaused: (val) => set({ isPaused: val }),
   setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
   setContextMenu: (menu) => set({ contextMenu: menu }),
+  updateMetrics: (newMetrics) => set({ metrics: { ...get().metrics, ...newMetrics } }),
   
   onNodesChange: (changes) => {
     set({ nodes: applyNodeChanges(changes, get().nodes) });
@@ -171,6 +182,16 @@ export const useCanvasStore = create((set, get) => ({
     }));
   },
 
-  startSimulation: () => set({ isSimulating: true }),
-  stopSimulation: () => set({ isSimulating: false }),
+  startSimulation: () => set({ isSimulating: true, isPaused: false }),
+  pauseSimulation: () => set({ isPaused: true }),
+  resumeSimulation: () => set({ isPaused: false }),
+  stopSimulation: () => set({ isSimulating: false, isPaused: false }),
+  resetSimulation: () => set({ isSimulating: false, isPaused: false, metrics: {
+    requestsPerSecond: 0,
+    averageLatency: 0,
+    throughput: 0,
+    errorRate: 0,
+    queueSize: 0,
+    cacheHitRatio: 0
+  }}),
 }));
