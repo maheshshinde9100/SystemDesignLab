@@ -70,6 +70,16 @@ function App() {
           <Templates />
         </ProtectedRoute>
       } />
+      <Route path="/learning-center" element={
+        <ProtectedRoute>
+          <LearningCenter />
+        </ProtectedRoute>
+      } />
+      <Route path="/learning-center/:topicId" element={
+        <ProtectedRoute>
+          <LearningCenter />
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 }
