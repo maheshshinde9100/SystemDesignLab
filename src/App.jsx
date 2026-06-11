@@ -7,6 +7,7 @@ import { ResetPassword } from './pages/ResetPassword.jsx';
 import { Dashboard } from './pages/Dashboard.jsx';
 import { Playground } from './pages/Playground.jsx';
 import { Templates } from './pages/Templates.jsx';
+import { LearningCenter } from './pages/LearningCenter.jsx';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuthStore();
