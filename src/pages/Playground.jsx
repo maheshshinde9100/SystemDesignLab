@@ -16,6 +16,7 @@ import { PropertiesPanel } from '../components/PropertiesPanel';
 import { ContextMenu } from '../components/ContextMenu';
 import { AnimatedEdge } from '../components/AnimatedEdge';
 import { SimulationEngine } from '../components/SimulationEngine';
+import { SimulationParticles } from '../components/SimulationParticles';
 import { LogOut, ArrowLeft, Trash2, Play, Square, Save, X, Pause, RotateCcw, Download, Upload } from 'lucide-react';
 
 const nodeTypes = {
@@ -410,6 +411,7 @@ export const Playground = () => {
                 return colors[node.data.type] || '#60a5fa';
               }}
             />
+            <SimulationParticles />
           </ReactFlow>
         </div>
 
