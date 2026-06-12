@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { ReactFlowProvider } from 'reactflow';
 import { useAuthStore } from './store/useAuthStore';
 import { Home } from './pages/Home.jsx';
 import { Login } from './pages/Login.jsx';
@@ -63,7 +64,9 @@ function App() {
       } />
       <Route path="/playground" element={
         <ProtectedRoute>
-          <Playground />
+          <ReactFlowProvider>
+            <Playground />
+          </ReactFlowProvider>
         </ProtectedRoute>
       } />
       <Route path="/templates" element={

@@ -3,9 +3,7 @@ import ReactFlow, {
   Background, 
   Controls, 
   MiniMap,
-  useNodesState,
-  useEdgesState,
-  addEdge,
+  useReactFlow,
 } from 'reactflow';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
@@ -38,7 +36,9 @@ export const Playground = () => {
   const [projectName, setProjectName] = useState('');
   const [saveError, setSaveError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const fileInputRef = useRef(null);
+  const { screenToFlowPosition } = useReactFlow();
   
   const { user, signOut } = useAuthStore();
   const { 
@@ -56,6 +56,7 @@ export const Playground = () => {
     setSelectedNode,
     clearCanvas,
     saveProject,
+    fetchProjects,
     copyNode,
     pasteNode,
     duplicateNode,
@@ -70,27 +71,23 @@ export const Playground = () => {
     setNodes,
     setEdges,
   } = useCanvasStore();
-  const [, setNodesInternal, onNodesChangeInternal] = useNodesState(nodes);
-  const [, setEdgesInternal, onEdgesChangeInternal] = useEdgesState(edges);
 
   const handleNodesChange = useCallback(
     (changes) => {
       onNodesChange(changes);
-      onNodesChangeInternal(changes);
       const deleteChange = changes.find(c => c.type === 'remove');
       if (deleteChange) {
         setSelectedNode(null);
       }
     },
-    [onNodesChange, onNodesChangeInternal, setSelectedNode]
+    [onNodesChange, setSelectedNode]
   );
 
   const handleEdgesChange = useCallback(
     (changes) => {
       onEdgesChange(changes);
-      onEdgesChangeInternal(changes);
     },
-    [onEdgesChange, onEdgesChangeInternal]
+    [onEdgesChange]
   );
 
   const handleConnect = useCallback(
@@ -112,7 +109,10 @@ export const Playground = () => {
       const type = event.dataTransfer.getData('application/reactflow/type');
       if (!type) return;
 
-      const position = { x: event.clientX - 100, y: event.clientY - 50 };
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
       const newNode = {
         id: getNodeId(),
         type: 'system',
@@ -122,7 +122,7 @@ export const Playground = () => {
 
       addNode(newNode);
     },
-    [addNode]
+    [addNode, screenToFlowPosition]
   );
 
   const onNodeClick = useCallback(
@@ -172,6 +172,7 @@ export const Playground = () => {
   const handleOpenSaveModal = () => {
     setProjectName(currentProject?.name || '');
     setSaveError('');
+    setSaveSuccess(false);
     setIsSaveModalOpen(true);
   };
 
@@ -184,9 +185,12 @@ export const Playground = () => {
 
     setSaving(true);
     setSaveError('');
+    setSaveSuccess(false);
     try {
-      await saveProject(projectName.trim());
-      setIsSaveModalOpen(false);
+      const savedProject = await saveProject(projectName.trim());
+      setSaveSuccess(true);
+      await fetchProjects();
+      setTimeout(() => setIsSaveModalOpen(false), 1500);
     } catch (err) {
       setSaveError(err.message);
     } finally {
@@ -481,6 +485,11 @@ export const Playground = () => {
               {saveError && (
                 <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm">
                   {saveError}
+                </div>
+              )}
+              {saveSuccess && (
+                <div className="bg-green-900/50 border border-green-500 text-green-200 px-4 py-2 rounded-lg text-sm">
+                  Project saved successfully!
                 </div>
               )}
               <div className="flex gap-3 justify-end">
