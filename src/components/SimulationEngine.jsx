@@ -5,18 +5,8 @@ let particleIdCounter = 0;
 const getParticleId = () => `particle_${particleIdCounter++}`;
 
 export const SimulationEngine = () => {
-  const { 
-    nodes, 
-    edges, 
-    isSimulating, 
-    isPaused, 
-    simulationSpeed, 
-    particles, 
-    setParticles, 
-    updateMetrics, 
-    updateSimulationStats,
-    simulationStats 
-  } = useCanvasStore();
+  const getStore = useCanvasStore.getState;
+  const isSimulating = useCanvasStore(state => state.isSimulating);
   
   const lastTimeRef = useRef(Date.now());
   const spawnTimerRef = useRef(0);
@@ -29,6 +19,19 @@ export const SimulationEngine = () => {
     }
 
     const runSimulation = () => {
+      const store = getStore();
+      const { 
+        nodes, 
+        edges, 
+        isPaused, 
+        simulationSpeed, 
+        particles, 
+        setParticles, 
+        updateMetrics, 
+        updateSimulationStats,
+        simulationStats 
+      } = store;
+
       const now = Date.now();
       const deltaTime = (now - lastTimeRef.current) / 1000;
       lastTimeRef.current = now;
@@ -55,9 +58,15 @@ export const SimulationEngine = () => {
               createdAt: now
             };
             setParticles([...particles, newParticle]);
+            const newTotalRequests = simulationStats.totalRequests + 1;
             updateSimulationStats({ 
-              totalRequests: simulationStats.totalRequests + 1,
+              totalRequests: newTotalRequests,
               activeRequests: simulationStats.activeRequests + 1
+            });
+            // Update metrics immediately when spawning
+            updateMetrics({
+              requestsPerSecond: Math.min(10, simulationSpeed * 3),
+              throughput: newTotalRequests
             });
           }
         }
@@ -69,6 +78,10 @@ export const SimulationEngine = () => {
         let newCacheHits = 0;
         let newCacheMisses = 0;
         let queueSize = 0;
+        let currentActiveRequests = simulationStats.activeRequests;
+        let currentTotalRequests = simulationStats.totalRequests;
+        let currentCacheHits = simulationStats.cacheHits;
+        let currentCacheMisses = simulationStats.cacheMisses;
 
         particles.forEach(particle => {
           const speed = 1.5 * simulationSpeed;
@@ -107,11 +120,11 @@ export const SimulationEngine = () => {
                 // End of path
                 completedRequests++;
                 totalLatency += (now - particle.createdAt) / 1000;
-                updateSimulationStats({ activeRequests: Math.max(0, simulationStats.activeRequests - 1) });
+                currentActiveRequests = Math.max(0, currentActiveRequests - 1);
               }
             } else {
               completedRequests++;
-              updateSimulationStats({ activeRequests: Math.max(0, simulationStats.activeRequests - 1) });
+              currentActiveRequests = Math.max(0, currentActiveRequests - 1);
             }
           } else {
             updatedParticles.push({
@@ -121,34 +134,45 @@ export const SimulationEngine = () => {
           }
         });
 
+        // Update particles
         setParticles(updatedParticles);
 
-        // Update metrics
-        if (completedRequests > 0) {
-          const avgLatency = totalLatency / completedRequests;
-          updateMetrics({
-            throughput: simulationStats.totalRequests,
-            averageLatency: avgLatency * 1000,
-            requestsPerSecond: Math.min(10, simulationSpeed * 3)
-          });
-        }
-
-        // Update cache hit ratio
-        const totalCacheAccess = simulationStats.cacheHits + simulationStats.cacheMisses + newCacheHits + newCacheMisses;
-        const cacheHitRatio = totalCacheAccess > 0 
-          ? (simulationStats.cacheHits + newCacheHits) / totalCacheAccess 
-          : 0;
+        // Update simulation stats
+        const updatedStats = {
+          activeRequests: currentActiveRequests,
+          cacheHits: currentCacheHits + newCacheHits,
+          cacheMisses: currentCacheMisses + newCacheMisses
+        };
         
         if (newCacheHits > 0 || newCacheMisses > 0) {
-          updateSimulationStats({
-            cacheHits: simulationStats.cacheHits + newCacheHits,
-            cacheMisses: simulationStats.cacheMisses + newCacheMisses
-          });
-          updateMetrics({
-            cacheHitRatio: cacheHitRatio,
-            queueSize: queueSize
-          });
+          updateSimulationStats(updatedStats);
+        } else if (completedRequests > 0) {
+          updateSimulationStats({ activeRequests: currentActiveRequests });
         }
+
+        // Update metrics - always update them while simulating
+        const newMetrics = {
+          requestsPerSecond: Math.min(10, simulationSpeed * 3),
+          throughput: currentTotalRequests,
+          queueSize: queueSize
+        };
+
+        if (completedRequests > 0) {
+          const avgLatency = totalLatency / completedRequests;
+          newMetrics.averageLatency = avgLatency * 1000;
+        } else if (simulationStats.averageLatency > 0) {
+          // Keep existing latency if no new completions
+          newMetrics.averageLatency = simulationStats.averageLatency;
+        }
+
+        const totalCacheAccess = (currentCacheHits + newCacheHits) + (currentCacheMisses + newCacheMisses);
+        const cacheHitRatio = totalCacheAccess > 0 
+          ? (currentCacheHits + newCacheHits) / totalCacheAccess 
+          : 0;
+        newMetrics.cacheHitRatio = cacheHitRatio;
+        newMetrics.errorRate = simulationStats.errorRate;
+        
+        updateMetrics(newMetrics);
       }
 
       animationRef.current = requestAnimationFrame(runSimulation);
@@ -159,7 +183,7 @@ export const SimulationEngine = () => {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [isSimulating, isPaused, simulationSpeed, nodes, edges, particles, setParticles, updateMetrics, updateSimulationStats, simulationStats]);
+  }, [isSimulating]); // Only trigger when isSimulating changes
 
   return null;
 };
