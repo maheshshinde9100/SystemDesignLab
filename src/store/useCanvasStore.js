@@ -6,6 +6,9 @@ import { supabase } from '../lib/supabase';
 let nodeIdCounter = 0;
 const getNodeId = () => `node_${nodeIdCounter++}`;
 
+let particleIdCounter = 0;
+const getParticleId = () => `particle_${particleIdCounter++}`;
+
 export const useCanvasStore = create((set, get) => ({
   nodes: [],
   edges: [],
@@ -18,6 +21,14 @@ export const useCanvasStore = create((set, get) => ({
   simulationSpeed: 1,
   contextMenu: null,
   clipboard: null,
+  particles: [],
+  simulationStats: {
+    totalRequests: 0,
+    cacheHits: 0,
+    cacheMisses: 0,
+    queueMessages: 0,
+    activeRequests: 0
+  },
   metrics: {
     requestsPerSecond: 0,
     averageLatency: 0,
@@ -35,7 +46,9 @@ export const useCanvasStore = create((set, get) => ({
   setIsPaused: (val) => set({ isPaused: val }),
   setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
   setContextMenu: (menu) => set({ contextMenu: menu }),
+  setParticles: (particles) => set({ particles }),
   updateMetrics: (newMetrics) => set({ metrics: { ...get().metrics, ...newMetrics } }),
+  updateSimulationStats: (newStats) => set({ simulationStats: { ...get().simulationStats, ...newStats } }),
   
   onNodesChange: (changes) => {
     set({ nodes: applyNodeChanges(changes, get().nodes) });
@@ -182,16 +195,55 @@ export const useCanvasStore = create((set, get) => ({
     }));
   },
 
-  startSimulation: () => set({ isSimulating: true, isPaused: false }),
+  addParticle: (particle) => {
+    set({ particles: [...get().particles, particle] });
+  },
+
+  removeParticle: (particleId) => {
+    set({ particles: get().particles.filter(p => p.id !== particleId) });
+  },
+
+  startSimulation: () => set({ 
+    isSimulating: true, 
+    isPaused: false, 
+    particles: [],
+    simulationStats: {
+      totalRequests: 0,
+      cacheHits: 0,
+      cacheMisses: 0,
+      queueMessages: 0,
+      activeRequests: 0
+    },
+    metrics: {
+      requestsPerSecond: 0,
+      averageLatency: 0,
+      throughput: 0,
+      errorRate: 0,
+      queueSize: 0,
+      cacheHitRatio: 0
+    }
+  }),
   pauseSimulation: () => set({ isPaused: true }),
   resumeSimulation: () => set({ isPaused: false }),
-  stopSimulation: () => set({ isSimulating: false, isPaused: false }),
-  resetSimulation: () => set({ isSimulating: false, isPaused: false, metrics: {
-    requestsPerSecond: 0,
-    averageLatency: 0,
-    throughput: 0,
-    errorRate: 0,
-    queueSize: 0,
-    cacheHitRatio: 0
-  }}),
+  stopSimulation: () => set({ isSimulating: false, isPaused: false, particles: [] }),
+  resetSimulation: () => set({ 
+    isSimulating: false, 
+    isPaused: false, 
+    particles: [],
+    simulationStats: {
+      totalRequests: 0,
+      cacheHits: 0,
+      cacheMisses: 0,
+      queueMessages: 0,
+      activeRequests: 0
+    },
+    metrics: {
+      requestsPerSecond: 0,
+      averageLatency: 0,
+      throughput: 0,
+      errorRate: 0,
+      queueSize: 0,
+      cacheHitRatio: 0
+    }
+  }),
 }));

@@ -1,7 +1,20 @@
 import { useCanvasStore } from '../store/useCanvasStore';
+import { useState, useEffect, useRef } from 'react';
 
 export const PropertiesPanel = () => {
   const { selectedNode, updateNodeData } = useCanvasStore();
+  const [label, setLabel] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const labelInputRef = useRef(null);
+  const subtitleInputRef = useRef(null);
+
+  // Update local state when selected node changes
+  useEffect(() => {
+    if (selectedNode) {
+      setLabel(selectedNode.data.label || '');
+      setSubtitle(selectedNode.data.subtitle || '');
+    }
+  }, [selectedNode?.id]); // Only update when selected node ID changes
 
   if (!selectedNode) {
     return (
@@ -13,11 +26,27 @@ export const PropertiesPanel = () => {
           Select a component to edit
         </div>
       </div>
-    );
-  }
+      );
+    }
 
-  const handleChange = (key, value) => {
-    updateNodeData(selectedNode.id, { [key]: value });
+  const handleLabelBlur = () => {
+    updateNodeData(selectedNode.id, { label: label });
+  };
+
+  const handleSubtitleBlur = () => {
+    updateNodeData(selectedNode.id, { subtitle: subtitle });
+  };
+
+  const handleLabelKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleLabelBlur();
+    }
+  };
+
+  const handleSubtitleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSubtitleBlur();
+    }
   };
 
   return (
@@ -30,8 +59,11 @@ export const PropertiesPanel = () => {
           <label className="block text-sm font-medium text-gray-300 mb-2">Label</label>
           <input
             type="text"
-            value={selectedNode.data.label || ''}
-            onChange={(e) => handleChange('label', e.target.value)}
+            ref={labelInputRef}
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            onBlur={handleLabelBlur}
+            onKeyDown={handleLabelKeyDown}
             className="w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
           />
         </div>
@@ -39,8 +71,11 @@ export const PropertiesPanel = () => {
           <label className="block text-sm font-medium text-gray-300 mb-2">Subtitle</label>
           <input
             type="text"
-            value={selectedNode.data.subtitle || ''}
-            onChange={(e) => handleChange('subtitle', e.target.value)}
+            ref={subtitleInputRef}
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+            onBlur={handleSubtitleBlur}
+            onKeyDown={handleSubtitleKeyDown}
             className="w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
             placeholder="e.g., 100 RPS"
           />
