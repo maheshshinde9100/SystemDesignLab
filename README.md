@@ -30,9 +30,9 @@ A modern web application for learning, visualizing, designing, and simulating di
 
 ```mermaid
 flowchart TB
-    User[User]
+    User(User)
     Browser[Web Browser]
-    CDN[CDN]
+    CDN{CDN}
     Browser <--> CDN
     Browser <--> AppFrontend[React App]
     AppFrontend <--> Supabase[Supabase BaaS]
@@ -40,31 +40,69 @@ flowchart TB
     Supabase --> DB[(PostgreSQL DB)]
     Supabase --> Storage[Supabase Storage]
     Auth <--> DB
-    
-    style User[User]
-    subgraph Frontend[Frontend Components]
-    Home[Home Page]
-    Login[Login Page]
-    Register[Register Page]
-    ResetPassword[Reset Password Page]
-    Dashboard[Dashboard Page]
-    Templates[Templates Page]
-    Playground[Playground Page]
-    LearningCenter[Learning Center Page]
+
+    %% Apply new, colorful styles with thicker strokes and rounded corners where applicable
+    classDef mainUser fill:#3b82f6,stroke:#1d4ed8,stroke-width:3px,color:white;
+    classDef mainUI fill:#a78bfa,stroke:#7c3aed,stroke-width:3px,color:white,rx:10,ry:10;
+    classDef mainGCP fill:#10b981,stroke:#047857,stroke-width:3px,color:white;
+    classDef mainDB fill:#f97316,stroke:#c2410c,stroke-width:3px,color:white,shape:cylinder;
+    classDef mainStorage fill:#f59e0b,stroke:#b45309,stroke-width:3px,color:white,shape:rect,rx:10;
+    classDef subPage fill:#ddd6fe,stroke:#a78bfa,stroke-width:1.5px,color:#3730a3,rx:8,ry:8;
+    classDef subFlow fill:#a7f3d0,stroke:#10b981,stroke-width:1.5px,color:#064e3b,rx:8,ry:8;
+
+    %% Apply the styles to primary nodes
+    class User mainUser;
+    class Browser mainUI;
+    class CDN mainGCP;
+    class AppFrontend mainUI;
+    class Supabase mainGCP;
+    class Auth mainGCP;
+    class DB mainDB;
+    class Storage mainStorage;
+
+    subgraph Frontend_Group [Frontend Components]
+        Home[Home Page]
+        Login[Login Page]
+        Register[Register Page]
+        ResetPassword[Reset Password Page]
+        Dashboard[Dashboard Page]
+        Templates[Templates Page]
+        Playground[Playground Page]
+        LearningCenter[Learning Center Page]
+        
+        %% Style all frontend pages consistently
+        class Home subPage;
+        class Login subPage;
+        class Register subPage;
+        class ResetPassword subPage;
+        class Dashboard subPage;
+        class Templates subPage;
+        class Playground subPage;
+        class LearningCenter subPage;
     end
 
-    subgraph State Management
-    ReactFlow[React Flow Components]
-    SystemNode[System Node]
-    AnimatedEdge[Animated Edge]
-    ComponentLibrary[Component Library]
-    PropertiesPanel[Properties Panel]
-    SimulationEngine[Simulation Engine]
-    SimulationParticles[Simulation Particles]
-    ContextMenu[Context Menu]
+    subgraph SM [State Management]
+        ReactFlow[React Flow Components]
+        SystemNode[System Node]
+        AnimatedEdge[Animated Edge]
+        ComponentLibrary[Component Library]
+        PropertiesPanel[Properties Panel]
+        SimulationEngine[Simulation Engine]
+        SimulationParticles[Simulation Particles]
+        ContextMenu[Context Menu]
+        
+        %% Style all logic and flow components consistently
+        class ReactFlow subFlow;
+        class SystemNode subFlow;
+        class AnimatedEdge subFlow;
+        class ComponentLibrary subFlow;
+        class PropertiesPanel subFlow;
+        class SimulationEngine subFlow;
+        class SimulationParticles subFlow;
+        class ContextMenu subFlow;
     end
 
-    style User --> Browser
+    User --> Browser
     Home --> Login
     Home --> Register
     Register --> Dashboard
