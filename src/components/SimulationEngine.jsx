@@ -5,8 +5,8 @@ let particleIdCounter = 0;
 const getParticleId = () => `particle_${particleIdCounter++}`;
 
 export const SimulationEngine = () => {
-  const getStore = useCanvasStore.getState;
   const isSimulating = useCanvasStore(state => state.isSimulating);
+  const getStore = useCanvasStore.getState;
   
   const lastTimeRef = useRef(Date.now());
   const spawnTimerRef = useRef(0);
@@ -19,7 +19,6 @@ export const SimulationEngine = () => {
     }
 
     const runSimulation = () => {
-      const store = getStore();
       const { 
         nodes, 
         edges, 
@@ -30,7 +29,7 @@ export const SimulationEngine = () => {
         updateMetrics, 
         updateSimulationStats,
         simulationStats 
-      } = store;
+      } = getStore();
 
       const now = Date.now();
       const deltaTime = (now - lastTimeRef.current) / 1000;
@@ -58,15 +57,13 @@ export const SimulationEngine = () => {
               createdAt: now
             };
             setParticles([...particles, newParticle]);
-            const newTotalRequests = simulationStats.totalRequests + 1;
-            updateSimulationStats({ 
-              totalRequests: newTotalRequests,
+            updateSimulationStats({
+              totalRequests: simulationStats.totalRequests + 1,
               activeRequests: simulationStats.activeRequests + 1
             });
-            // Update metrics immediately when spawning
             updateMetrics({
               requestsPerSecond: Math.min(10, simulationSpeed * 3),
-              throughput: newTotalRequests
+              throughput: simulationStats.totalRequests + 1
             });
           }
         }
@@ -79,9 +76,6 @@ export const SimulationEngine = () => {
         let newCacheMisses = 0;
         let queueSize = 0;
         let currentActiveRequests = simulationStats.activeRequests;
-        let currentTotalRequests = simulationStats.totalRequests;
-        let currentCacheHits = simulationStats.cacheHits;
-        let currentCacheMisses = simulationStats.cacheMisses;
 
         particles.forEach(particle => {
           const speed = 1.5 * simulationSpeed;
@@ -93,7 +87,6 @@ export const SimulationEngine = () => {
             if (targetNode) {
               const outgoingEdges = edges.filter(e => e.source === targetNode.id);
               
-              // Component-specific behavior
               if (targetNode.data.type === 'cache') {
                 if (Math.random() > 0.3) {
                   newCacheHits++;
@@ -134,26 +127,23 @@ export const SimulationEngine = () => {
           }
         });
 
-        // Update particles
         setParticles(updatedParticles);
 
-        // Update simulation stats
-        const updatedStats = {
-          activeRequests: currentActiveRequests,
-          cacheHits: currentCacheHits + newCacheHits,
-          cacheMisses: currentCacheMisses + newCacheMisses
-        };
-        
         if (newCacheHits > 0 || newCacheMisses > 0) {
-          updateSimulationStats(updatedStats);
+          updateSimulationStats({
+            activeRequests: currentActiveRequests,
+            cacheHits: simulationStats.cacheHits + newCacheHits,
+            cacheMisses: simulationStats.cacheMisses + newCacheMisses
+          });
         } else if (completedRequests > 0) {
-          updateSimulationStats({ activeRequests: currentActiveRequests });
+          updateSimulationStats({
+            activeRequests: currentActiveRequests
+          });
         }
 
-        // Update metrics - always update them while simulating
         const newMetrics = {
           requestsPerSecond: Math.min(10, simulationSpeed * 3),
-          throughput: currentTotalRequests,
+          throughput: simulationStats.totalRequests,
           queueSize: queueSize
         };
 
@@ -161,13 +151,12 @@ export const SimulationEngine = () => {
           const avgLatency = totalLatency / completedRequests;
           newMetrics.averageLatency = avgLatency * 1000;
         } else if (simulationStats.averageLatency > 0) {
-          // Keep existing latency if no new completions
           newMetrics.averageLatency = simulationStats.averageLatency;
         }
 
-        const totalCacheAccess = (currentCacheHits + newCacheHits) + (currentCacheMisses + newCacheMisses);
+        const totalCacheAccess = (simulationStats.cacheHits + newCacheHits) + (simulationStats.cacheMisses + newCacheMisses);
         const cacheHitRatio = totalCacheAccess > 0 
-          ? (currentCacheHits + newCacheHits) / totalCacheAccess 
+          ? (simulationStats.cacheHits + newCacheHits) / totalCacheAccess 
           : 0;
         newMetrics.cacheHitRatio = cacheHitRatio;
         newMetrics.errorRate = simulationStats.errorRate;
@@ -183,7 +172,7 @@ export const SimulationEngine = () => {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [isSimulating]); // Only trigger when isSimulating changes
+  }, [isSimulating]);
 
   return null;
 };
