@@ -1,4 +1,4 @@
-# SystemCanvas: System Design Playground
+# SystemDesignLab - System Design Playground
 
 A modern web application for **learning, visualizing, designing, and simulating** distributed systems through interactive architecture diagrams and real-time simulations.
 

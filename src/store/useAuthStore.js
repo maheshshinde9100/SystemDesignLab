@@ -24,6 +24,9 @@ export const useAuthStore = create((set) => ({
   signInWithGoogle: async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      }
     });
     if (error) throw error;
     return data;
@@ -32,6 +35,9 @@ export const useAuthStore = create((set) => ({
   signInWithGitHub: async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      }
     });
     if (error) throw error;
     return data;
