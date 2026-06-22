@@ -9,8 +9,8 @@ export const LearningCenter = () => {
   const selectedTopic = learningTopics.find(t => t.id === topicId);
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700 px-6 py-4">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800 via-gray-900 to-black relative">
+      <nav className="bg-gray-800/50 backdrop-blur-md border-b border-gray-700/50 px-6 py-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Link
@@ -20,7 +20,7 @@ export const LearningCenter = () => {
               <ArrowLeft className="w-5 h-5" />
               Back
             </Link>
-            <h1 className="text-2xl font-bold text-white">System Design Playground</h1>
+            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">System Design Lab</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-gray-300">
@@ -36,7 +36,8 @@ export const LearningCenter = () => {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-green-600/10 rounded-full blur-[128px] pointer-events-none"></div>
         {selectedTopic ? (
           <TopicDetail topic={selectedTopic} />
         ) : (
@@ -60,11 +61,13 @@ const TopicsList = () => {
           <Link
             key={topic.id}
             to={`/learning-center/${topic.id}`}
-            className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition-colors"
+            className="bg-gray-800/40 backdrop-blur-md rounded-2xl p-6 border border-gray-700/50 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-900/20 transition-all hover:-translate-y-1 group"
           >
-            <div className="flex items-center gap-3 mb-3">
-              <BookOpen className="w-8 h-8 text-green-400" />
-              <h3 className="text-xl font-semibold text-white">{topic.title}</h3>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-green-500/10 rounded-xl group-hover:bg-green-500/20 transition-colors">
+                <BookOpen className="w-6 h-6 text-green-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white tracking-wide">{topic.title}</h3>
             </div>
             <p className="text-gray-400">{topic.description}</p>
           </Link>
@@ -85,10 +88,12 @@ const TopicDetail = ({ topic }) => {
         Back to all topics
       </Link>
 
-      <div className="bg-gray-800 rounded-xl p-8 border border-gray-700">
-        <div className="flex items-center gap-3 mb-6">
-          <BookOpen className="w-10 h-10 text-green-400" />
-          <h2 className="text-3xl font-bold text-white">{topic.title}</h2>
+      <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-8 md:p-10 border border-gray-700/50 shadow-2xl">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="p-4 bg-green-500/10 rounded-2xl">
+            <BookOpen className="w-10 h-10 text-green-400" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 tracking-tight">{topic.title}</h2>
         </div>
 
         <p className="text-gray-300 text-lg mb-8">{topic.description}</p>
@@ -101,10 +106,12 @@ const TopicDetail = ({ topic }) => {
           <p className="text-gray-300">{topic.explanation}</p>
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <section className="bg-gray-700 rounded-lg p-5">
-            <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-400" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+          <section className="bg-gray-900/50 backdrop-blur-md border border-gray-700/30 rounded-2xl p-6 shadow-inner">
+            <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+              </div>
               Advantages
             </h4>
             <ul className="text-gray-300 space-y-2">
@@ -117,9 +124,11 @@ const TopicDetail = ({ topic }) => {
             </ul>
           </section>
 
-          <section className="bg-gray-700 rounded-lg p-5">
-            <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-yellow-400" />
+          <section className="bg-gray-900/50 backdrop-blur-md border border-gray-700/30 rounded-2xl p-6 shadow-inner">
+            <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+              <div className="p-2 bg-yellow-500/20 rounded-lg">
+                <AlertCircle className="w-5 h-5 text-yellow-400" />
+              </div>
               Disadvantages
             </h4>
             <ul className="text-gray-300 space-y-2">

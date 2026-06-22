@@ -286,5 +286,99 @@ export const learningTopics = [
       "What are common patterns for microservices?"
     ],
     realWorldExamples: ["Netflix", "Uber", "Amazon"]
+  },
+  {
+    id: "rate-limiting",
+    title: "Rate Limiting",
+    description: "Control the rate of traffic sent or received on a network.",
+    explanation: "Rate limiting is used to control the amount of incoming and outgoing traffic to or from a network. It helps prevent abuse, mitigates DDoS attacks, and ensures fair usage of resources among users.",
+    advantages: [
+      "Prevents resource exhaustion and server overload",
+      "Mitigates DDoS attacks and brute force attempts",
+      "Enables tiered pricing and API quotas"
+    ],
+    disadvantages: [
+      "Can degrade user experience if limits are too strict",
+      "Adds latency and complexity to the request path"
+    ],
+    useCases: [
+      "Public APIs to prevent abuse",
+      "Login endpoints to prevent brute force attacks"
+    ],
+    interviewQuestions: [
+      "Explain the Token Bucket vs. Leaky Bucket algorithms.",
+      "How would you implement rate limiting in a distributed system?"
+    ],
+    realWorldExamples: ["Cloudflare Rate Limiting", "API Gateways (AWS, Kong)"]
+  },
+  {
+    id: "api-gateway-vs-load-balancer",
+    title: "API Gateway vs Load Balancer",
+    description: "Understanding the difference between request routing and API management.",
+    explanation: "While both sit between clients and servers, a Load Balancer simply distributes traffic across multiple servers at the network layer (L4 or L7). An API Gateway is a reverse proxy that acts as a single entry point for APIs, offering higher-level features like authentication, rate limiting, and request transformation.",
+    advantages: [
+      "Load Balancers are highly efficient for simple traffic distribution",
+      "API Gateways centralize cross-cutting concerns (auth, logging)"
+    ],
+    disadvantages: [
+      "API Gateways can become a bottleneck if not scaled properly",
+      "Using both adds network hops and latency"
+    ],
+    useCases: [
+      "Load Balancer: distributing generic HTTP/TCP traffic",
+      "API Gateway: exposing a set of microservices as a unified public API"
+    ],
+    interviewQuestions: [
+      "When would you use an API Gateway instead of a Load Balancer?",
+      "Can an API Gateway also act as a Load Balancer?"
+    ],
+    realWorldExamples: ["AWS API Gateway vs AWS ALB", "Kong", "NGINX"]
+  },
+  {
+    id: "object-storage-vs-block-storage",
+    title: "Object Storage vs Block Storage",
+    description: "Comparing two fundamental approaches to storing data.",
+    explanation: "Block storage splits data into fixed-size chunks (blocks) and stores them with unique identifiers, typically attached to a single compute node (like a hard drive). Object storage manages data as objects (data, metadata, unique ID) in a flat address space, accessed via APIs over HTTP.",
+    advantages: [
+      "Block Storage: Extremely low latency, great for databases",
+      "Object Storage: Infinite scalability, highly durable, cheap for large files"
+    ],
+    disadvantages: [
+      "Block Storage: Harder to share across multiple servers, more expensive",
+      "Object Storage: Higher latency, cannot modify parts of a file (must rewrite)"
+    ],
+    useCases: [
+      "Block Storage: Databases, OS boot drives",
+      "Object Storage: Backups, video/image hosting, data lakes"
+    ],
+    interviewQuestions: [
+      "Why wouldn't you host a relational database on S3?",
+      "What is the difference between EBS and S3?"
+    ],
+    realWorldExamples: ["AWS S3 (Object) vs AWS EBS (Block)"]
+  },
+  {
+    id: "cdn",
+    title: "Content Delivery Networks (CDN)",
+    description: "Distribute content globally to reduce latency for end users.",
+    explanation: "A CDN is a geographically distributed group of servers that work together to provide fast delivery of Internet content. A CDN allows for the quick transfer of assets needed for loading Internet content including HTML pages, javascript files, stylesheets, images, and videos.",
+    advantages: [
+      "Dramatically reduces latency for geographically distributed users",
+      "Reduces bandwidth costs on origin servers",
+      "Improves website security (DDoS protection)"
+    ],
+    disadvantages: [
+      "Stale data if cache invalidation is not handled properly",
+      "Additional cost and configuration complexity"
+    ],
+    useCases: [
+      "Video streaming platforms (Netflix, YouTube)",
+      "Global e-commerce sites with heavy image assets"
+    ],
+    interviewQuestions: [
+      "How does a CDN work?",
+      "What is the difference between push and pull CDNs?"
+    ],
+    realWorldExamples: ["Cloudflare", "Akamai", "AWS CloudFront"]
   }
 ];

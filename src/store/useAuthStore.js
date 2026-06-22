@@ -11,13 +11,13 @@ export const useAuthStore = create((set) => ({
   
   signUp: async (email, password) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return data;
   },
   
   signIn: async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return data;
   },
   
@@ -28,7 +28,7 @@ export const useAuthStore = create((set) => ({
         redirectTo: `${window.location.origin}/dashboard`,
       }
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return data;
   },
   
@@ -39,19 +39,19 @@ export const useAuthStore = create((set) => ({
         redirectTo: `${window.location.origin}/dashboard`,
       }
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return data;
   },
   
   signOut: async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   },
   
   resetPassword: async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   },
 }));

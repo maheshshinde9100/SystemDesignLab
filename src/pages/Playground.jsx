@@ -223,7 +223,7 @@ export const Playground = () => {
           setEdges(data.edges);
         }
       } catch (err) {
-        console.error('Error importing JSON:', err);
+        // Silently handle parse errors
       }
     };
     reader.readAsText(file);
@@ -258,8 +258,8 @@ export const Playground = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700 px-6 py-3 flex justify-between items-center shrink-0">
+    <div className="h-screen flex flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800 via-gray-900 to-black font-sans">
+      <nav className="bg-gray-800/70 backdrop-blur-md border-b border-gray-700/50 px-6 py-3 flex justify-between items-center shrink-0 z-50">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/dashboard')}
@@ -269,7 +269,7 @@ export const Playground = () => {
             Back
           </button>
           <div>
-            <h1 className="text-xl font-bold text-white">System Design Playground</h1>
+            <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight">System Design Lab</h1>
             {currentProject && (
               <p className="text-sm text-gray-400">{currentProject.name}</p>
             )}
@@ -333,7 +333,7 @@ export const Playground = () => {
         </div>
       </nav>
 
-      <div className="bg-gray-800 border-b border-gray-700 px-6 py-3 flex items-center gap-4 shrink-0">
+      <div className="bg-gray-800/40 backdrop-blur-sm border-b border-gray-700/50 px-6 py-3 flex items-center gap-4 shrink-0 z-40">
         <span className="text-gray-300 font-semibold">Simulation:</span>
         <button
           onClick={isSimulating ? (isPaused ? resumeSimulation : pauseSimulation) : startSimulation}
@@ -395,10 +395,10 @@ export const Playground = () => {
             fitView
             className="bg-gray-900"
           >
-            <Background color="#374151" gap={20} />
-            <Controls className="bg-gray-800 border border-gray-700" />
+            <Background color="#4b5563" gap={20} size={1} />
+            <Controls className="bg-gray-800/80 backdrop-blur-md border border-gray-700/50 rounded-lg overflow-hidden shadow-xl" />
             <MiniMap
-              className="bg-gray-800 border border-gray-700"
+              className="bg-gray-800/80 backdrop-blur-md border border-gray-700/50 rounded-lg shadow-xl"
               nodeColor={(node) => {
                 const colors = {
                   client: '#60a5fa',
@@ -419,7 +419,7 @@ export const Playground = () => {
           </ReactFlow>
         </div>
 
-        <div className="w-72 bg-gray-800 border-l border-gray-700 flex flex-col">
+        <div className="w-72 bg-gray-800/60 backdrop-blur-xl border-l border-gray-700/50 flex flex-col z-40 relative">
           <PropertiesPanel />
           {isSimulating && (
             <div className="border-t border-gray-700 p-4">

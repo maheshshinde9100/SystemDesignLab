@@ -42,9 +42,16 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-white mb-2 text-center">Welcome Back</h1>
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800 via-gray-900 to-black flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px] pointer-events-none"></div>
+      
+      <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 p-8 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
+        <div className="flex justify-center mb-6">
+          <div className="bg-blue-500/20 p-3 rounded-full border border-blue-500/30">
+            <LogIn className="w-8 h-8 text-blue-400" />
+          </div>
+        </div>
+        <h1 className="text-3xl font-bold text-white mb-2 text-center tracking-tight">Welcome Back</h1>
         <p className="text-gray-400 text-center mb-8">Sign in to your account</p>
         
         {error && (

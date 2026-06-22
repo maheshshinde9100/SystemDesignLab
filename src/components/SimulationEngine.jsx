@@ -188,7 +188,12 @@ function getNodeColor(type) {
     readReplica: '#fbbf24',
     queue: '#22d3ee',
     microservice: '#fb7185',
-    cdn: '#818cf8'
+    cdn: '#818cf8',
+    firewall: '#f87171',
+    waf: '#ef4444',
+    s3: '#34d399',
+    nat: '#2dd4bf',
+    graphql: '#e879f9'
   };
   return colors[type] || '#60a5fa';
 }
