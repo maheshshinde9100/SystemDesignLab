@@ -8,6 +8,11 @@ import {
   Layers,
   Cpu,
   Cloud,
+  Shield,
+  ShieldAlert,
+  Box,
+  Network,
+  Hexagon
 } from 'lucide-react';
 
 const components = [
@@ -21,6 +26,11 @@ const components = [
   { type: 'queue', icon: MessageSquare, label: 'Message Queue', color: 'text-cyan-400' },
   { type: 'microservice', icon: Cpu, label: 'Microservice', color: 'text-rose-400' },
   { type: 'cdn', icon: Cloud, label: 'CDN', color: 'text-indigo-400' },
+  { type: 'firewall', icon: Shield, label: 'Firewall', color: 'text-red-400' },
+  { type: 'waf', icon: ShieldAlert, label: 'WAF', color: 'text-red-500' },
+  { type: 's3', icon: Box, label: 'S3 Bucket', color: 'text-emerald-400' },
+  { type: 'nat', icon: Network, label: 'NAT Gateway', color: 'text-teal-400' },
+  { type: 'graphql', icon: Hexagon, label: 'GraphQL API', color: 'text-fuchsia-400' },
 ];
 
 export const ComponentLibrary = ({ onAddNode }) => {

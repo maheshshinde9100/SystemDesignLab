@@ -112,7 +112,7 @@ export const useCanvasStore = create((set, get) => ({
         .single();
     }
 
-    if (result.error) throw result.error;
+    if (result.error) throw new Error(result.error.message);
     set({ currentProject: result.data });
     return result.data;
   },
@@ -142,7 +142,7 @@ export const useCanvasStore = create((set, get) => ({
       .order('updated_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching projects:', error);
+      // Silently fail or track externally in production
     } else {
       set({ projects: data || [] });
     }
@@ -155,7 +155,7 @@ export const useCanvasStore = create((set, get) => ({
       .delete()
       .eq('id', projectId);
 
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     set((state) => ({
       projects: state.projects.filter(p => p.id !== projectId),
       currentProject: state.currentProject?.id === projectId ? null : state.currentProject,
